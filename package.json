@@ -1,0 +1,28 @@
+{
+  "name": "task_2",
+  "version": "1.0.0",
+  "description": "Yandex SHRI Case 2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "eslint": "6.5.1",
+    "eslint-config-airbnb-base": "14.0.0",
+    "eslint-config-prettier": "6.4.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-prettier": "3.1.1",
+    "pm2": "4.1.2",
+    "prettier": "1.18.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoksS/Task_2.git"
+  },
+  "author": "MoksS <skarobogyodko@gmail.com> (https://github.com/MoksS)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MoksS/Task_2/issues"
+  },
+  "homepage": "https://github.com/MoksS/Task_2#readme"
+}
