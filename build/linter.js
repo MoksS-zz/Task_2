@@ -1,33 +1,21 @@
-const json = `{
-  "block": "warning",
-  "content": [
-      {
-          "block": "placeholder",
-          "mods": { "size": "m" }
-      },
-      {
-          "elem": "content",
-          "content": [
-              {
-                  "block": "text",
-                  "mods": { "size": "m" }
-              },
-              {
-                  "block": "text",
-                  "mods": { "size": "l" }
-              }
-          ]
-      }
-  ]
-}`;
+// const blocks = {
+//   warning: {
 
+//   }
+// }
+
+// console.log(blocks);
 /**
  * @param {string} str
  */
 
 function lint(str) {
-  const arr = str.split("\n");
+  let arr = str.trim().split("\n");
+
+  console.log(arr); // удалить, помогает дебажить
+  arr = arr.map(e => e.trim());
+
   return arr.length;
 }
 
-console.log(lint(json));
+module.exports = lint;
