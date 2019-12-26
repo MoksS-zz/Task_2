@@ -1,21 +1,34 @@
-// const blocks = {
-//   warning: {
+const parse = require("json-to-ast");
 
-//   }
-// }
-
-// console.log(blocks);
 /**
  * @param {string} str
  */
 
+const size = [
+  "xxxs",
+  "xxs",
+  "xs",
+  "s",
+  "m",
+  "l",
+  "xl",
+  "xxl",
+  "xxxl",
+  "xxxxl",
+  "xxxxxl"
+];
+
+const warning = {
+  text: null,
+  button() {
+    const sText = size.indexOf(this.text);
+    return sText + 1 >= size.length ? "error" : size[sText + 1];
+  },
+  
+};
+
 function lint(str) {
-  let arr = str.trim().split("\n");
-
-  console.log(arr); // удалить, помогает дебажить
-  arr = arr.map(e => e.trim());
-
-  return arr.length;
+  return parse(str);
 }
 
 module.exports = lint;
