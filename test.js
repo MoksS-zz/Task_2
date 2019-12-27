@@ -7,8 +7,6 @@ const { json, jsonError } = require("./dataTest/json");
 
 console.log(lint(json));
 
-
-
 // console.log(chalk.yellow("Hello world!"));
 // console.log(JSON.stringify(jsonError, null, 4));
 
