@@ -27,6 +27,7 @@
   "homepage": "https://github.com/MoksS/Task_2#readme",
   "dependencies": {
     "chalk": "3.0.0",
+    "json-source-map": "^0.6.1",
     "nodemon": "2.0.2"
   }
 }
