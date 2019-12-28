@@ -15,37 +15,39 @@ const size = [
   "xxxxxl"
 ];
 
-const warning = {
-  text: null,
-  button() {
-    const sText = size.indexOf(this.text);
-    return sText + 1 >= size.length ? "error" : size[sText + 1];
-  }
-};
-
 /**
  * @param {string} str
  */
 
-function reqcursion(obj) {
-  console.log(obj);
-//   const location = obj.loc;
-//   console.log("location \n", location, "\n");
-//   console.log(obj.children[0]);
-//   for (let i = 0; i < obj.children.length; i++) {
-//     if (obj.children[i].key.value === "content") {
-//       console.log("Content ", true);
-//       reqcursion(obj.children[i].value);
-//     }
-//   }
+function reqcursion(obj, path = "") {
+  if (Array.isArray(obj)) {
+    obj.forEach((e, i) =>{
+      reqcursion(e, `${path}/${i}`);
+    });
+    return;
+  }
+
+  // const rule = [];
+
+  for (const el in obj) {
+    const pat = `${path}/${el}`;
+    if (obj[el] === "warning") {
+      console.log("work");
+    }
+
+    if (el === "content") {
+      reqcursion(obj[el], pat);
+    }
+    console.log(el, pat);
+  }
 }
 
 function lint(str) {
   const errors = [];
   const obj = jsonMap.parse(str);
-  // const req = reqcursion.bind(this);
 
-  reqcursion(obj);
+  console.log(obj);
+  reqcursion(obj.data);
 
   return errors;
 }
