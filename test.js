@@ -1,9 +1,10 @@
 const chalk = require("chalk");
-const lint = require("./build/linter");
+const lint = require("./linter.js");
 
 require("util").inspect.defaultOptions.depth = null;
 
 const { json, jsonError } = require("./dataTest/json");
+const { grid } = require("./dataTest/grid");
 
 console.log(lint(json));
 

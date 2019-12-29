@@ -2,7 +2,7 @@ exports.json = `{
   "block": "warning",
   "content": [
       {
-          "block": "placeholder",
+          "block!": "placeholder",
           "mods": { "size": "m" }
       },
       {
@@ -15,8 +15,20 @@ exports.json = `{
               {
                   "block": "text",
                   "mods": { "size": "l" }
+              },
+              {
+                  "block": "warning",
+                  "mods": { "size": "l" }
+              },
+              {
+                  "jopa1": "text",
+                  "mods1": { "size": "l" }
               }
           ]
+      },
+      {
+          "jopa2": "text",
+          "mods2": { "size": "l" }
       }
   ]
 }`;

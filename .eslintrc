@@ -41,7 +41,9 @@
       "no-case-declarations":"off",
       "no-bitwise":"off",
       "no-param-reassign":"off",
-      "no-shadow":"off"
+      "no-shadow":"off",
+      "no-continue":"off",
+      "no-prototype-builtins":"off"
   },
   "globals": {
       "Atomics": true,
