@@ -15,29 +15,8 @@ exports.json = `{
               {
                   "block": "text",
                   "mods": { "size": "l" }
-              },
-              {
-                  "block": "warning",
-                  "content": [
-                    {
-                        "block": "text",
-                        "mods": { "size": "m" }
-                    },
-                    {
-                        "block": "text",
-                        "mods": { "size": "l" }
-                    }
-                  ]
-              },
-              {
-                  "block": "text",
-                  "mods": { "size": "l" }
               }
           ]
-      },
-      {
-          "block": "text",
-          "mods": { "size": "l" }
       }
   ]
 }`;

@@ -46,6 +46,7 @@ class Warning {
 
 function reqcursion(obj, path = "", rule = {}) {
   rule = { ...rule };
+
   if (Array.isArray(obj)) {
     obj.forEach((e, i) => {
       reqcursion(e, `${path}/${i}`, rule);
@@ -53,19 +54,42 @@ function reqcursion(obj, path = "", rule = {}) {
     return;
   }
 
-  for (const el in obj) {
-    const newPath = `${path}/${el}`;
+  if (obj.block === "warning") {
+    console.log("\nхуита\n");
+    rule.warning = new Warning({ path });
+  }
 
-    if (el === "block" && obj[el] === "warning") {
-      console.log("\nхуита\n");
-      rule.warning = new Warning({ path });
-    }
+  // console.log(`---- > \n Елемент ${el}\n Path ${newPath}\n Правила`, rule);
 
-    console.log(`---- > \n Елемент ${el}\n Path ${newPath}\n Правила`, rule);
+  if (obj.hasOwnProperty("content")) {
+    const newPath = `${path}/content`;
+    reqcursion(obj.content, newPath, rule);
+    return;
+  }
 
-    if (el === "content") {
-      reqcursion(obj[el], newPath, rule);
-      return;
+  if (rule.hasOwnProperty("warning")) {
+    if (obj.block === "text" && obj.hasOwnProperty("mods")) {
+      if (rule.warning.text.mods.size === "none") {
+        rule.warning.text.mods.size = obj.mods.size;
+        return; // переписать
+      }
+
+      if (rule.warning.text.mods.size !== obj.mods.size) {
+        this.errors.push({
+          code: rule.warning.text.code,
+          error: rule.warning.text.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
     }
   }
 }
