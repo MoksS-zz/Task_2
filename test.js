@@ -1,5 +1,5 @@
 const chalk = require("chalk");
-const lint = require("./linter.js");
+const lint = require("./linter");
 
 require("util").inspect.defaultOptions.depth = null;
 
