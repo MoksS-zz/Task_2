@@ -43,7 +43,8 @@
       "no-param-reassign":"off",
       "no-shadow":"off",
       "no-continue":"off",
-      "no-prototype-builtins":"off"
+      "no-prototype-builtins":"off",
+      "no-undef":"off"
   },
   "globals": {
       "Atomics": true,

@@ -2,7 +2,7 @@ exports.json = `{
   "block": "warning",
   "content": [
       {
-          "block!": "placeholder",
+          "block": "placeholder",
           "mods": { "size": "m" }
       },
       {
@@ -18,17 +18,26 @@ exports.json = `{
               },
               {
                   "block": "warning",
-                  "mods": { "size": "l" }
+                  "content": [
+                    {
+                        "block": "text",
+                        "mods": { "size": "m" }
+                    },
+                    {
+                        "block": "text",
+                        "mods": { "size": "l" }
+                    }
+                  ]
               },
               {
-                  "jopa1": "text",
-                  "mods1": { "size": "l" }
+                  "block": "text",
+                  "mods": { "size": "l" }
               }
           ]
       },
       {
-          "jopa2": "text",
-          "mods2": { "size": "l" }
+          "block": "text",
+          "mods": { "size": "l" }
       }
   ]
 }`;
