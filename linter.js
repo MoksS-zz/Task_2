@@ -72,7 +72,6 @@ function reqcursion(obj, path = "", rule = {}) {
       if (rule.warning.text.mods.size === "none") {
         rule.warning.text.mods.size = obj.mods.size;
         rule.warning.button.mods.size = size[size.indexOf(obj.mods.size) + 1];
-        return; // переписать
       }
 
       if (rule.warning.text.mods.size !== obj.mods.size) {
@@ -113,7 +112,7 @@ function reqcursion(obj, path = "", rule = {}) {
         });
       }
 
-      if (rule.warning.text.mods.size !== obj.mods.size) {
+      if (rule.warning.button.mods.size !== obj.mods.size) {
         this.errors.push({
           code: rule.warning.button.code,
           error: rule.warning.button.error,
