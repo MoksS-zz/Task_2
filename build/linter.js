@@ -688,6 +688,7 @@ function reqcursion(obj, path = "", rule = {}) {
  * @param {string} str
  */
 
+// eslint-disable-next-line no-unused-vars
 function lint(str) {
   const obj = jsonMap.parse(str);
 

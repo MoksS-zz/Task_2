@@ -20,12 +20,12 @@ exports.json = `{
                 "block": "text",
                 "mods": { "size": "s" }
               },
-              { "block": "placeholder", "mods": { "size": "xl" } },
-              { "block": "button", "mods": { "size": "s" } },
-              { "block": "placeholder", "mods": { "size": "xl" } },
-              { "block": "placeholder", "mods": { "size": "s" } }
+              { "block": "button", "mods": { "size": "s" } }
           ]
       },
+      { "block": "placeholder", "mods": { "size": "xl" } },
+      { "block": "placeholder", "mods": { "size": "xl" } },
+      { "block": "placeholder", "mods": { "size": "s" } },
       {
         "block": "text",
         "mods": { "size": "s" }
