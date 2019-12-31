@@ -37,6 +37,7 @@ exports.json = `{
 exports.valid = `{
   "block": "warning",
   "content": [
+      { "block": "button", "mods": { "size": "l" } },
       {
           "block": "placeholder",
           "mods": { "size": "m" }

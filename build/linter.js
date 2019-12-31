@@ -567,12 +567,12 @@ function reqcursion(obj, path = "", rule = {}) {
   if (rule.hasOwnProperty("warning")) {
     if (obj.block === "text") {
       if (rule.warning.text.mods.size === "none") {
+        const sizeButton = size[size.indexOf(obj.mods.size) + 1];
         rule.warning.text.mods.size = obj.mods.size;
 
         if (
           rule.warning.button.mods.size !== "none" &&
-          rule.warning.button.mods.size !== obj.mods.size &&
-          rule.warning.button.pass
+          rule.warning.button.mods.size !== sizeButton
         ) {
           this.errors.push({
             code: rule.warning.button.code,
@@ -592,7 +592,7 @@ function reqcursion(obj, path = "", rule = {}) {
           rule.warning.button.pass = false;
         }
 
-        rule.warning.button.mods.size = size[size.indexOf(obj.mods.size) + 1];
+        rule.warning.button.mods.size = sizeButton;
       }
 
       if (
@@ -613,6 +613,7 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+
         rule.warning.text.pass = false;
       }
     }
@@ -635,6 +636,7 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+
         rule.warning.sequence.pass = false;
       }
 
