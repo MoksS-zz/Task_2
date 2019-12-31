@@ -670,6 +670,25 @@ function reqcursion(obj, path = "", rule = {}) {
     if (obj.block === "placeholder") {
       rule.warning.sequence.placeholder = true;
 
+      if (rule.warning.sequence.button && rule.warning.sequence.pass) {
+        this.errors.push({
+          code: rule.warning.sequence.code,
+          error: rule.warning.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+
+        rule.warning.sequence.pass = false;
+      }
+
       if (
         !rule.warning.placeholder.mods.size.includes(obj.mods.size) &&
         rule.warning.placeholder.pass

@@ -66,8 +66,7 @@ exports.valid = `{
                   "mods": { "size": "m" }
               },
               { "block": "placeholder", "mods": { "size": "l" } },
-              { "block": "button", "mods": { "size": "l" } },
-              { "block": "placeholder", "mods": { "size": "l" } }
+              { "block": "button", "mods": { "size": "l" } }
           ]
       }
   ]
