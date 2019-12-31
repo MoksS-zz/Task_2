@@ -15,7 +15,9 @@ exports.json = `{
               {
                   "block": "text",
                   "mods": { "size": "l" }
-              }
+              },
+              { "block": "button", "mods": { "size": "s" } },
+              { "block": "placeholder", "mods": { "size": "xl" } }
           ]
       }
   ]
