@@ -527,10 +527,11 @@ class Warning {
       mods: { size: ["s", "m", "l"] }
     };
 
-    this.shape = {
+    this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
       error: "Блок button не может находиться перед блоком placeholder",
-      shape: ["placeholder", "button"]
+      placeholder: false,
+      button: false
     };
 
     this.path = obj.path;
@@ -539,6 +540,7 @@ class Warning {
 
 function reqcursion(obj, path = "", rule = {}) {
   rule = { ...rule };
+
   if (Array.isArray(obj)) {
     obj.forEach((e, i) => {
       reqcursion(e, `${path}/${i}`, rule);
@@ -546,19 +548,117 @@ function reqcursion(obj, path = "", rule = {}) {
     return;
   }
 
-  for (const el in obj) {
-    const newPath = `${path}/${el}`;
+  if (obj.block === "warning") {
+    rule.warning = new Warning({ path });
+  }
 
-    if (el === "block" && obj[el] === "warning") {
-      console.log("\nхуита\n");
-      rule.warning = new Warning({ path });
+  // console.log(`---- > \n Елемент ${obj}\n Path ${path}\n Правила`, rule);
+
+  if (obj.hasOwnProperty("content")) {
+    const newPath = `${path}/content`;
+    reqcursion(obj.content, newPath, rule);
+    return;
+  }
+
+  if (rule.hasOwnProperty("warning")) {
+    if (obj.block === "text" && obj.hasOwnProperty("mods")) {
+      if (rule.warning.text.mods.size === "none") {
+        rule.warning.text.mods.size = obj.mods.size;
+        rule.warning.button.mods.size = size[size.indexOf(obj.mods.size) + 1];
+      }
+
+      if (rule.warning.text.mods.size !== obj.mods.size) {
+        this.errors.push({
+          code: rule.warning.text.code,
+          error: rule.warning.text.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
     }
 
-    console.log(`---- > \n Елемент ${el}\n Path ${newPath}\n Правила`, rule);
+    if (obj.block === "button") {
+      rule.warning.sequence.button = true;
 
-    if (el === "content") {
-      reqcursion(obj[el], newPath, rule);
-      return;
+      if (!rule.warning.sequence.placeholder) {
+        this.errors.push({
+          code: rule.warning.sequence.code,
+          error: rule.warning.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
+
+      if (rule.warning.button.mods.size !== obj.mods.size) {
+        this.errors.push({
+          code: rule.warning.button.code,
+          error: rule.warning.button.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
+    }
+
+    if (obj.block === "placeholder") {
+      rule.warning.sequence.placeholder = true;
+
+      if (rule.warning.sequence.button) {
+        this.errors.push({
+          code: rule.warning.sequence.code,
+          error: rule.warning.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
+
+      if (!rule.warning.placeholder.mods.size.includes(obj.mods.size)) {
+        this.errors.push({
+          code: rule.warning.placeholder.code,
+          error: rule.warning.placeholder.error,
+          location: {
+            start: {
+              column: this.pointers[rule.warning.path].value.column,
+              line: this.pointers[rule.warning.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.warning.path].valueEnd.column,
+              line: this.pointers[rule.warning.path].valueEnd.line
+            }
+          }
+        });
+      }
     }
   }
 }

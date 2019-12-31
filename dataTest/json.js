@@ -23,6 +23,31 @@ exports.json = `{
   ]
 }`;
 
+exports.valid = `{
+  "block": "warning",
+  "content": [
+      {
+          "block": "placeholder",
+          "mods": { "size": "m" }
+      },
+      {
+          "elem": "content",
+          "content": [
+              {
+                  "block": "text",
+                  "mods": { "size": "m" }
+              },
+              {
+                  "block": "text",
+                  "mods": { "size": "m" }
+              },
+              { "block": "placeholder", "mods": { "size": "l" } },
+              { "block": "button", "mods": { "size": "l" } }
+          ]
+      }
+  ]
+}`;
+
 exports.jsonError = [
   {
     code: "WARNING.TEXT_SIZES_SHOULD_BE_EQUAL",

@@ -4,7 +4,7 @@ const { performance } = require("perf_hooks");
 
 require("util").inspect.defaultOptions.depth = null;
 
-const { json, jsonError } = require("./dataTest/json");
+const { json, jsonError , valid } = require("./dataTest/json");
 const { grid } = require("./dataTest/grid");
 
 const time = performance.now();
@@ -13,6 +13,8 @@ console.log(lint(json));
 
 const timeEnd = performance.now();
 console.log(`${(timeEnd - time).toFixed(1)}ms`);
+
+console.log("VALID JSON ---->\n", lint(valid));
 
 // console.log(chalk.yellow("Hello world!"));
 // console.log(JSON.stringify(jsonError, null, 4));
