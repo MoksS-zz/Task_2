@@ -20,7 +20,20 @@ exports.json = `{
                 "block": "text",
                 "mods": { "size": "s" }
               },
-              { "block": "button", "mods": { "size": "s" } }
+              { "block": "button", "mods": { "size": "s" } },
+              { "block": "warning",
+                "content": [
+                  {
+                      "block": "placeholder",
+                      "mods": { "size": "m" }
+                  },
+                  { "block": "button", "mods": { "size": "xxl" } },
+                  {
+                    "block": "text",
+                    "mods": { "size": "m" }
+                  }
+                ]
+              }
           ]
       },
       { "block": "placeholder", "mods": { "size": "xl" } },
@@ -37,7 +50,6 @@ exports.json = `{
 exports.valid = `{
   "block": "warning",
   "content": [
-      { "block": "button", "mods": { "size": "l" } },
       {
           "block": "placeholder",
           "mods": { "size": "m" }
@@ -54,7 +66,8 @@ exports.valid = `{
                   "mods": { "size": "m" }
               },
               { "block": "placeholder", "mods": { "size": "l" } },
-              { "block": "button", "mods": { "size": "l" } }
+              { "block": "button", "mods": { "size": "l" } },
+              { "block": "placeholder", "mods": { "size": "l" } }
           ]
       }
   ]
