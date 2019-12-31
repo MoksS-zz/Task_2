@@ -19,26 +19,30 @@ class Warning {
     this.text = {
       code: "WARNING.TEXT_SIZES_SHOULD_BE_EQUAL",
       mods: { size: obj.size || "none" },
-      error: "Тексты в блоке warning должны быть одного размера"
+      error: "Тексты в блоке warning должны быть одного размера",
+      pass: true
     };
 
     this.button = {
       code: "WARNING.INVALID_BUTTON_SIZE",
       error: "Размер кнопки блока warning должен быть на 1 шаг больше текста",
-      mods: { size: obj.size || "none" }
+      mods: { size: obj.size || "none" },
+      pass: true
     };
 
     this.placeholder = {
       code: "WARNING.INVALID_PLACEHOLDER_SIZE",
       error: "Недопустимые размеры для блока placeholder",
-      mods: { size: ["s", "m", "l"] }
+      mods: { size: ["s", "m", "l"] },
+      pass: true
     };
 
     this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
       error: "Блок button не может находиться перед блоком placeholder",
       placeholder: false,
-      button: false
+      button: false,
+      pass: true
     };
 
     this.path = obj.path;
@@ -68,13 +72,17 @@ function reqcursion(obj, path = "", rule = {}) {
   }
 
   if (rule.hasOwnProperty("warning")) {
+    // проверить hasOwnProperty
     if (obj.block === "text" && obj.hasOwnProperty("mods")) {
       if (rule.warning.text.mods.size === "none") {
         rule.warning.text.mods.size = obj.mods.size;
         rule.warning.button.mods.size = size[size.indexOf(obj.mods.size) + 1];
       }
 
-      if (rule.warning.text.mods.size !== obj.mods.size) {
+      if (
+        rule.warning.text.mods.size !== obj.mods.size &&
+        rule.warning.text.pass
+      ) {
         this.errors.push({
           code: rule.warning.text.code,
           error: rule.warning.text.error,
@@ -89,13 +97,14 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+        rule.warning.text.pass = false;
       }
     }
 
     if (obj.block === "button") {
       rule.warning.sequence.button = true;
 
-      if (!rule.warning.sequence.placeholder) {
+      if (!rule.warning.sequence.placeholder && rule.warning.sequence.pass) {
         this.errors.push({
           code: rule.warning.sequence.code,
           error: rule.warning.sequence.error,
@@ -110,9 +119,13 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+        rule.warning.sequence.pass = false;
       }
 
-      if (rule.warning.button.mods.size !== obj.mods.size) {
+      if (
+        rule.warning.button.mods.size !== obj.mods.size &&
+        rule.warning.button.pass
+      ) {
         this.errors.push({
           code: rule.warning.button.code,
           error: rule.warning.button.error,
@@ -127,13 +140,14 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+        rule.warning.button.pass = false;
       }
     }
 
     if (obj.block === "placeholder") {
       rule.warning.sequence.placeholder = true;
 
-      if (rule.warning.sequence.button) {
+      if (rule.warning.sequence.button && rule.warning.sequence.pass) {
         this.errors.push({
           code: rule.warning.sequence.code,
           error: rule.warning.sequence.error,
@@ -148,9 +162,14 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+
+        rule.warning.sequence.pass = false;
       }
 
-      if (!rule.warning.placeholder.mods.size.includes(obj.mods.size)) {
+      if (
+        !rule.warning.placeholder.mods.size.includes(obj.mods.size) &&
+        rule.warning.placeholder.pass
+      ) {
         this.errors.push({
           code: rule.warning.placeholder.code,
           error: rule.warning.placeholder.error,
@@ -165,6 +184,8 @@ function reqcursion(obj, path = "", rule = {}) {
             }
           }
         });
+
+        rule.warning.placeholder.pass = false;
       }
     }
   }
