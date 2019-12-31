@@ -565,10 +565,33 @@ function reqcursion(obj, path = "", rule = {}) {
   }
 
   if (rule.hasOwnProperty("warning")) {
-    // проверить hasOwnProperty
-    if (obj.block === "text" && obj.hasOwnProperty("mods")) {
+    if (obj.block === "text") {
       if (rule.warning.text.mods.size === "none") {
         rule.warning.text.mods.size = obj.mods.size;
+
+        if (
+          rule.warning.button.mods.size !== "none" &&
+          rule.warning.button.mods.size !== obj.mods.size &&
+          rule.warning.button.pass
+        ) {
+          this.errors.push({
+            code: rule.warning.button.code,
+            error: rule.warning.button.error,
+            location: {
+              start: {
+                column: this.pointers[rule.warning.path].value.column,
+                line: this.pointers[rule.warning.path].value.line
+              },
+              end: {
+                column: this.pointers[rule.warning.path].valueEnd.column,
+                line: this.pointers[rule.warning.path].valueEnd.line
+              }
+            }
+          });
+
+          rule.warning.button.pass = false;
+        }
+
         rule.warning.button.mods.size = size[size.indexOf(obj.mods.size) + 1];
       }
 
@@ -613,6 +636,11 @@ function reqcursion(obj, path = "", rule = {}) {
           }
         });
         rule.warning.sequence.pass = false;
+      }
+
+      if (rule.warning.button.mods.size === "none") {
+        rule.warning.button.mods.size = obj.mods.size;
+        return;
       }
 
       if (
