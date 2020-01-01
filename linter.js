@@ -48,6 +48,148 @@ class Warning {
     this.path = obj.path;
   }
 }
+function warning(obj, rule) {
+  if (obj.block === "text") {
+    if (rule.text.mods.size === "none") {
+      const sizeButton = size[size.indexOf(obj.mods.size) + 1];
+      rule.text.mods.size = obj.mods.size;
+
+      if (
+        rule.button.mods.size !== "none" &&
+        rule.button.mods.size !== sizeButton
+      ) {
+        this.errors.push({
+          code: rule.button.code,
+          error: rule.button.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
+          }
+        });
+
+        rule.button.pass = false;
+      }
+
+      rule.button.mods.size = sizeButton;
+    }
+
+    if (rule.text.mods.size !== obj.mods.size && rule.text.pass) {
+      this.errors.push({
+        code: rule.text.code,
+        error: rule.text.error,
+        location: {
+          start: {
+            column: this.pointers[rule.path].value.column,
+            line: this.pointers[rule.path].value.line
+          },
+          end: {
+            column: this.pointers[rule.path].valueEnd.column,
+            line: this.pointers[rule.path].valueEnd.line
+          }
+        }
+      });
+
+      rule.text.pass = false;
+    }
+  }
+
+  if (obj.block === "button") {
+    rule.sequence.button = true;
+
+    if (!rule.sequence.placeholder && rule.sequence.pass) {
+      this.errors.push({
+        code: rule.sequence.code,
+        error: rule.sequence.error,
+        location: {
+          start: {
+            column: this.pointers[rule.path].value.column,
+            line: this.pointers[rule.path].value.line
+          },
+          end: {
+            column: this.pointers[rule.path].valueEnd.column,
+            line: this.pointers[rule.path].valueEnd.line
+          }
+        }
+      });
+
+      rule.sequence.pass = false;
+    }
+
+    if (rule.button.mods.size === "none") {
+      rule.button.mods.size = obj.mods.size;
+      return;
+    }
+
+    if (rule.button.mods.size !== obj.mods.size && rule.button.pass) {
+      this.errors.push({
+        code: rule.button.code,
+        error: rule.button.error,
+        location: {
+          start: {
+            column: this.pointers[rule.path].value.column,
+            line: this.pointers[rule.path].value.line
+          },
+          end: {
+            column: this.pointers[rule.path].valueEnd.column,
+            line: this.pointers[rule.path].valueEnd.line
+          }
+        }
+      });
+      rule.button.pass = false;
+    }
+  }
+
+  if (obj.block === "placeholder") {
+    rule.sequence.placeholder = true;
+
+    if (rule.sequence.button && rule.sequence.pass) {
+      this.errors.push({
+        code: rule.sequence.code,
+        error: rule.sequence.error,
+        location: {
+          start: {
+            column: this.pointers[rule.path].value.column,
+            line: this.pointers[rule.path].value.line
+          },
+          end: {
+            column: this.pointers[rule.path].valueEnd.column,
+            line: this.pointers[rule.path].valueEnd.line
+          }
+        }
+      });
+
+      rule.sequence.pass = false;
+    }
+
+    if (
+      !rule.placeholder.mods.size.includes(obj.mods.size) &&
+      rule.placeholder.pass
+    ) {
+      this.errors.push({
+        code: rule.placeholder.code,
+        error: rule.placeholder.error,
+        location: {
+          start: {
+            column: this.pointers[rule.path].value.column,
+            line: this.pointers[rule.path].value.line
+          },
+          end: {
+            column: this.pointers[rule.path].valueEnd.column,
+            line: this.pointers[rule.path].valueEnd.line
+          }
+        }
+      });
+
+      rule.placeholder.pass = false;
+    }
+  }
+}
 
 function reqcursion(obj, path = "", rule = {}) {
   rule = { ...rule };
@@ -72,152 +214,7 @@ function reqcursion(obj, path = "", rule = {}) {
   }
 
   if (rule.hasOwnProperty("warning")) {
-    if (obj.block === "text") {
-      if (rule.warning.text.mods.size === "none") {
-        const sizeButton = size[size.indexOf(obj.mods.size) + 1];
-        rule.warning.text.mods.size = obj.mods.size;
-
-        if (
-          rule.warning.button.mods.size !== "none" &&
-          rule.warning.button.mods.size !== sizeButton
-        ) {
-          this.errors.push({
-            code: rule.warning.button.code,
-            error: rule.warning.button.error,
-            location: {
-              start: {
-                column: this.pointers[rule.warning.path].value.column,
-                line: this.pointers[rule.warning.path].value.line
-              },
-              end: {
-                column: this.pointers[rule.warning.path].valueEnd.column,
-                line: this.pointers[rule.warning.path].valueEnd.line
-              }
-            }
-          });
-
-          rule.warning.button.pass = false;
-        }
-
-        rule.warning.button.mods.size = sizeButton;
-      }
-
-      if (
-        rule.warning.text.mods.size !== obj.mods.size &&
-        rule.warning.text.pass
-      ) {
-        this.errors.push({
-          code: rule.warning.text.code,
-          error: rule.warning.text.error,
-          location: {
-            start: {
-              column: this.pointers[rule.warning.path].value.column,
-              line: this.pointers[rule.warning.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.warning.path].valueEnd.column,
-              line: this.pointers[rule.warning.path].valueEnd.line
-            }
-          }
-        });
-
-        rule.warning.text.pass = false;
-      }
-    }
-
-    if (obj.block === "button") {
-      rule.warning.sequence.button = true;
-
-      if (!rule.warning.sequence.placeholder && rule.warning.sequence.pass) {
-        this.errors.push({
-          code: rule.warning.sequence.code,
-          error: rule.warning.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[rule.warning.path].value.column,
-              line: this.pointers[rule.warning.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.warning.path].valueEnd.column,
-              line: this.pointers[rule.warning.path].valueEnd.line
-            }
-          }
-        });
-
-        rule.warning.sequence.pass = false;
-      }
-
-      if (rule.warning.button.mods.size === "none") {
-        rule.warning.button.mods.size = obj.mods.size;
-        return;
-      }
-
-      if (
-        rule.warning.button.mods.size !== obj.mods.size &&
-        rule.warning.button.pass
-      ) {
-        this.errors.push({
-          code: rule.warning.button.code,
-          error: rule.warning.button.error,
-          location: {
-            start: {
-              column: this.pointers[rule.warning.path].value.column,
-              line: this.pointers[rule.warning.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.warning.path].valueEnd.column,
-              line: this.pointers[rule.warning.path].valueEnd.line
-            }
-          }
-        });
-        rule.warning.button.pass = false;
-      }
-    }
-
-    if (obj.block === "placeholder") {
-      rule.warning.sequence.placeholder = true;
-
-      if (rule.warning.sequence.button && rule.warning.sequence.pass) {
-        this.errors.push({
-          code: rule.warning.sequence.code,
-          error: rule.warning.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[rule.warning.path].value.column,
-              line: this.pointers[rule.warning.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.warning.path].valueEnd.column,
-              line: this.pointers[rule.warning.path].valueEnd.line
-            }
-          }
-        });
-
-        rule.warning.sequence.pass = false;
-      }
-
-      if (
-        !rule.warning.placeholder.mods.size.includes(obj.mods.size) &&
-        rule.warning.placeholder.pass
-      ) {
-        this.errors.push({
-          code: rule.warning.placeholder.code,
-          error: rule.warning.placeholder.error,
-          location: {
-            start: {
-              column: this.pointers[rule.warning.path].value.column,
-              line: this.pointers[rule.warning.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.warning.path].valueEnd.column,
-              line: this.pointers[rule.warning.path].valueEnd.line
-            }
-          }
-        });
-
-        rule.warning.placeholder.pass = false;
-      }
-    }
+    warning(obj, rule.warning);
   }
 }
 
