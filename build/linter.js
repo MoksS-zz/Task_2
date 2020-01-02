@@ -533,7 +533,7 @@ class Warning {
     this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
       error: "Блок button не может находиться перед блоком placeholder",
-      button: {}
+      button: []
     };
 
     this.path = obj.path;
@@ -596,6 +596,7 @@ class Warning {
 
     if (obj.block === "button") {
       rule.button.path.push(path);
+      rule.sequence.button.push(path);
 
       if (rule.button.mods.size === "none") {
         rule.button.mods.size = obj.mods.size;
@@ -622,6 +623,25 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
+      if (rule.sequence.button.length > 0) {
+        rule.sequence.button.forEach(e => {
+          this.errors.push({
+            code: rule.sequence.code,
+            error: rule.sequence.error,
+            location: {
+              start: {
+                column: this.pointers[e].value.column,
+                line: this.pointers[e].value.line
+              },
+              end: {
+                column: this.pointers[e].valueEnd.column,
+                line: this.pointers[e].valueEnd.line
+              }
+            }
+          });
+        });
+        rule.sequence.button.length = 0;
+      }
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
         this.errors.push({
           code: rule.placeholder.code,
