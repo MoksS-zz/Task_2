@@ -533,9 +533,7 @@ class Warning {
     this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
       error: "Блок button не может находиться перед блоком placeholder",
-      placeholder: false,
-      button: false,
-      pass: true
+      buttonArray: {}
     };
 
     this.path = obj.path;
@@ -598,25 +596,15 @@ class Warning {
 
     if (obj.block === "button") {
       rule.button.path.push(path);
-      rule.sequence.button = true;
 
-      if (!rule.sequence.placeholder && rule.sequence.pass) {
-        this.errors.push({
-          code: rule.sequence.code,
-          error: rule.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
-            }
-          }
-        });
+      let newPath = path.split("/");
+      newPath.pop();
+      newPath = newPath.join("/");
 
-        rule.sequence.pass = false;
+      if (!rule.sequence.buttonArray.hasOwnProperty(newPath)) {
+        rule.sequence.buttonArray[newPath] = [path];
+      } else {
+        rule.sequence.buttonArray[newPath].push(path);
       }
 
       if (rule.button.mods.size === "none") {
@@ -644,25 +632,28 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
-      rule.sequence.placeholder = true;
+      let newPath = path.split("/");
+      newPath.pop();
+      newPath = newPath.join("/");
 
-      if (rule.sequence.button) {
-        this.errors.push({
-          code: rule.sequence.code,
-          error: rule.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
+      if (rule.sequence.buttonArray.hasOwnProperty(newPath)) {
+        rule.sequence.buttonArray[newPath].forEach(e =>{
+          this.errors.push({
+            code: rule.sequence.code,
+            error: rule.sequence.error,
+            location: {
+              start: {
+                column: this.pointers[e].value.column,
+                line: this.pointers[e].value.line
+              },
+              end: {
+                column: this.pointers[e].valueEnd.column,
+                line: this.pointers[e].valueEnd.line
+              }
             }
-          }
+          });
         });
-
-        rule.sequence.pass = false;
+        rule.sequence.buttonArray[newPath].length = 0;
       }
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
@@ -807,8 +798,6 @@ function reqcursion(obj, path = "", rule = {}) {
   if (obj.block === "warning") {
     rule.warning = new Warning({ path });
   }
-
-  // console.log(`---- > \n Елемент ${obj}\n Path ${path}\n Правила`, rule);
 
   if (obj.hasOwnProperty("content")) {
     const newPath = `${path}/content`;
