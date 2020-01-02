@@ -40,7 +40,7 @@ class Warning {
     this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
       error: "Блок button не может находиться перед блоком placeholder",
-      buttonArray: {}
+      button: {}
     };
 
     this.path = obj.path;
@@ -104,16 +104,6 @@ class Warning {
     if (obj.block === "button") {
       rule.button.path.push(path);
 
-      let newPath = path.split("/");
-      newPath.pop();
-      newPath = newPath.join("/");
-
-      if (!rule.sequence.buttonArray.hasOwnProperty(newPath)) {
-        rule.sequence.buttonArray[newPath] = [path];
-      } else {
-        rule.sequence.buttonArray[newPath].push(path);
-      }
-
       if (rule.button.mods.size === "none") {
         rule.button.mods.size = obj.mods.size;
         return;
@@ -139,30 +129,6 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
-      let newPath = path.split("/");
-      newPath.pop();
-      newPath = newPath.join("/");
-
-      if (rule.sequence.buttonArray.hasOwnProperty(newPath)) {
-        rule.sequence.buttonArray[newPath].forEach(e =>{
-          this.errors.push({
-            code: rule.sequence.code,
-            error: rule.sequence.error,
-            location: {
-              start: {
-                column: this.pointers[e].value.column,
-                line: this.pointers[e].value.line
-              },
-              end: {
-                column: this.pointers[e].valueEnd.column,
-                line: this.pointers[e].valueEnd.line
-              }
-            }
-          });
-        });
-        rule.sequence.buttonArray[newPath].length = 0;
-      }
-
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
         this.errors.push({
           code: rule.placeholder.code,
