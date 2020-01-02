@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 const jsonMap = require("./json-source-map.js");
 
 const size = [
@@ -47,17 +48,88 @@ class Warning {
 
     this.path = obj.path;
   }
-}
-function warning(obj, rule) {
-  if (obj.block === "text") {
-    if (rule.text.mods.size === "none") {
-      const sizeButton = size[size.indexOf(obj.mods.size) + 1];
-      rule.text.mods.size = obj.mods.size;
 
-      if (
-        rule.button.mods.size !== "none" &&
-        rule.button.mods.size !== sizeButton
-      ) {
+  static check(obj, rule, path) {
+    if (obj.block === "text") {
+      if (rule.text.mods.size === "none") {
+        const sizeButton = size[size.indexOf(obj.mods.size) + 1];
+        rule.text.mods.size = obj.mods.size;
+
+        if (
+          rule.button.mods.size !== "none" &&
+          rule.button.mods.size !== sizeButton
+        ) {
+          this.errors.push({
+            code: rule.button.code,
+            error: rule.button.error,
+            location: {
+              start: {
+                column: this.pointers[rule.path].value.column,
+                line: this.pointers[rule.path].value.line
+              },
+              end: {
+                column: this.pointers[rule.path].valueEnd.column,
+                line: this.pointers[rule.path].valueEnd.line
+              }
+            }
+          });
+
+          rule.button.pass = false;
+        }
+
+        rule.button.mods.size = sizeButton;
+        return;
+      }
+
+      if (rule.text.mods.size !== obj.mods.size && rule.text.pass) {
+        this.errors.push({
+          code: rule.text.code,
+          error: rule.text.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
+          }
+        });
+
+        rule.text.pass = false;
+      }
+      return;
+    }
+
+    if (obj.block === "button") {
+      rule.sequence.button = true;
+
+      if (!rule.sequence.placeholder && rule.sequence.pass) {
+        this.errors.push({
+          code: rule.sequence.code,
+          error: rule.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
+          }
+        });
+
+        rule.sequence.pass = false;
+      }
+
+      if (rule.button.mods.size === "none") {
+        rule.button.mods.size = obj.mods.size;
+        return;
+      }
+
+      if (rule.button.mods.size !== obj.mods.size && rule.button.pass) {
         this.errors.push({
           code: rule.button.code,
           error: rule.button.error,
@@ -72,121 +144,165 @@ function warning(obj, rule) {
             }
           }
         });
-
         rule.button.pass = false;
       }
-
-      rule.button.mods.size = sizeButton;
-    }
-
-    if (rule.text.mods.size !== obj.mods.size && rule.text.pass) {
-      this.errors.push({
-        code: rule.text.code,
-        error: rule.text.error,
-        location: {
-          start: {
-            column: this.pointers[rule.path].value.column,
-            line: this.pointers[rule.path].value.line
-          },
-          end: {
-            column: this.pointers[rule.path].valueEnd.column,
-            line: this.pointers[rule.path].valueEnd.line
-          }
-        }
-      });
-
-      rule.text.pass = false;
-    }
-  }
-
-  if (obj.block === "button") {
-    rule.sequence.button = true;
-
-    if (!rule.sequence.placeholder && rule.sequence.pass) {
-      this.errors.push({
-        code: rule.sequence.code,
-        error: rule.sequence.error,
-        location: {
-          start: {
-            column: this.pointers[rule.path].value.column,
-            line: this.pointers[rule.path].value.line
-          },
-          end: {
-            column: this.pointers[rule.path].valueEnd.column,
-            line: this.pointers[rule.path].valueEnd.line
-          }
-        }
-      });
-
-      rule.sequence.pass = false;
-    }
-
-    if (rule.button.mods.size === "none") {
-      rule.button.mods.size = obj.mods.size;
       return;
     }
 
-    if (rule.button.mods.size !== obj.mods.size && rule.button.pass) {
-      this.errors.push({
-        code: rule.button.code,
-        error: rule.button.error,
-        location: {
-          start: {
-            column: this.pointers[rule.path].value.column,
-            line: this.pointers[rule.path].value.line
-          },
-          end: {
-            column: this.pointers[rule.path].valueEnd.column,
-            line: this.pointers[rule.path].valueEnd.line
+    if (obj.block === "placeholder") {
+      rule.sequence.placeholder = true;
+
+      if (rule.sequence.button && rule.sequence.pass) {
+        this.errors.push({
+          code: rule.sequence.code,
+          error: rule.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
           }
-        }
-      });
-      rule.button.pass = false;
+        });
+
+        rule.sequence.pass = false;
+      }
+
+      if (
+        !rule.placeholder.mods.size.includes(obj.mods.size) &&
+        rule.placeholder.pass
+      ) {
+        this.errors.push({
+          code: rule.placeholder.code,
+          error: rule.placeholder.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
+          }
+        });
+
+        rule.placeholder.pass = false;
+      }
     }
   }
+}
 
-  if (obj.block === "placeholder") {
-    rule.sequence.placeholder = true;
+class Header {
+  constructor(obj) {
+    this.h1 = {
+      code: "TEXT.SEVERAL_H1",
+      error: "Заголовок h1 на странице должен быть единственным",
+      available: false,
+      pass: true
+    };
 
-    if (rule.sequence.button && rule.sequence.pass) {
-      this.errors.push({
-        code: rule.sequence.code,
-        error: rule.sequence.error,
-        location: {
-          start: {
-            column: this.pointers[rule.path].value.column,
-            line: this.pointers[rule.path].value.line
-          },
-          end: {
-            column: this.pointers[rule.path].valueEnd.column,
-            line: this.pointers[rule.path].valueEnd.line
+    this.h2 = {
+      code: "TEXT.INVALID_H2_POSITION",
+      error: "Заголовок h2  не может находиться перед заголовком h1",
+      available: false,
+      path: []
+    };
+
+    this.h3 = {
+      code: "TEXT.INVALID_H3_POSITION",
+      error: "Заголовок h3 не может находиться перед заголовком h2",
+      available: false,
+      path: []
+    };
+
+    this.path = obj.path;
+  }
+
+  static check(obj, rule, path) {
+    if (obj.block !== "text") return;
+
+    if (obj.mods.type === "h1") {
+      if (rule.h2.available && rule.h2.path.length !== 0) {
+        rule.h2.path.forEach(e => {
+          this.errors.push({
+            code: rule.h2.code,
+            error: rule.h2.error,
+            location: {
+              start: {
+                column: this.pointers[e].value.column,
+                line: this.pointers[e].value.line
+              },
+              end: {
+                column: this.pointers[e].valueEnd.column,
+                line: this.pointers[e].valueEnd.line
+              }
+            }
+          });
+        });
+        rule.h2.path.length = 0;
+      }
+
+      if (!rule.h1.available) {
+        rule.h1.available = true;
+        return;
+      }
+
+      if (rule.h1.pass) {
+        this.errors.push({
+          code: rule.h1.code,
+          error: rule.h1.error,
+          location: {
+            start: {
+              column: this.pointers[path].value.column,
+              line: this.pointers[path].value.line
+            },
+            end: {
+              column: this.pointers[path].valueEnd.column,
+              line: this.pointers[path].valueEnd.line
+            }
           }
-        }
-      });
+        });
 
-      rule.sequence.pass = false;
+        rule.h1.pass = false;
+      }
+
+      return;
     }
 
-    if (
-      !rule.placeholder.mods.size.includes(obj.mods.size) &&
-      rule.placeholder.pass
-    ) {
-      this.errors.push({
-        code: rule.placeholder.code,
-        error: rule.placeholder.error,
-        location: {
-          start: {
-            column: this.pointers[rule.path].value.column,
-            line: this.pointers[rule.path].value.line
-          },
-          end: {
-            column: this.pointers[rule.path].valueEnd.column,
-            line: this.pointers[rule.path].valueEnd.line
-          }
-        }
-      });
+    if (obj.mods.type === "h2") {
+      rule.h2.available = true;
+      rule.h2.path.push(path);
 
-      rule.placeholder.pass = false;
+      if (rule.h3.available && rule.h3.path.length !== 0) {
+        rule.h3.path.forEach(e => {
+          this.errors.push({
+            code: rule.h3.code,
+            error: rule.h3.error,
+            location: {
+              start: {
+                column: this.pointers[e].value.column,
+                line: this.pointers[e].value.line
+              },
+              end: {
+                column: this.pointers[e].valueEnd.column,
+                line: this.pointers[e].valueEnd.line
+              }
+            }
+          });
+        });
+        rule.h3.path.length = 0;
+      }
+
+      return;
+    }
+
+    if (obj.mods.type === "h3") {
+      rule.h3.available = true;
+      rule.h3.path.push(path);
     }
   }
 }
@@ -214,7 +330,11 @@ function reqcursion(obj, path = "", rule = {}) {
   }
 
   if (rule.hasOwnProperty("warning")) {
-    warning(obj, rule.warning);
+    Warning.check.call(this, obj, rule.warning, path);
+  }
+
+  if (rule.hasOwnProperty("header")) {
+    Header.check.call(this, obj, rule.header, path);
   }
 }
 
@@ -227,9 +347,9 @@ function lint(str) {
 
   this.errors = [];
   this.pointers = obj.pointers;
-
   const req = reqcursion.bind(this);
-  req(obj.data);
+  const path = "";
+  req(obj.data, path, { header: new Header({ path }) });
 
   return this.errors;
 }
