@@ -521,14 +521,13 @@ class Warning {
       code: "WARNING.INVALID_BUTTON_SIZE",
       error: "Размер кнопки блока warning должен быть на 1 шаг больше текста",
       mods: { size: obj.size || "none" },
-      pass: true
+      path: []
     };
 
     this.placeholder = {
       code: "WARNING.INVALID_PLACEHOLDER_SIZE",
       error: "Недопустимые размеры для блока placeholder",
-      mods: { size: ["s", "m", "l"] },
-      pass: true
+      mods: { size: ["s", "m", "l"] }
     };
 
     this.sequence = {
@@ -552,22 +551,24 @@ class Warning {
           rule.button.mods.size !== "none" &&
           rule.button.mods.size !== sizeButton
         ) {
-          this.errors.push({
-            code: rule.button.code,
-            error: rule.button.error,
-            location: {
-              start: {
-                column: this.pointers[rule.path].value.column,
-                line: this.pointers[rule.path].value.line
-              },
-              end: {
-                column: this.pointers[rule.path].valueEnd.column,
-                line: this.pointers[rule.path].valueEnd.line
+          rule.button.path.forEach(e => {
+            this.errors.push({
+              code: rule.button.code,
+              error: rule.button.error,
+              location: {
+                start: {
+                  column: this.pointers[e].value.column,
+                  line: this.pointers[e].value.line
+                },
+                end: {
+                  column: this.pointers[e].valueEnd.column,
+                  line: this.pointers[e].valueEnd.line
+                }
               }
-            }
+            });
           });
 
-          rule.button.pass = false;
+          rule.button.path.length = 0;
         }
 
         rule.button.mods.size = sizeButton;
@@ -596,6 +597,7 @@ class Warning {
     }
 
     if (obj.block === "button") {
+      rule.button.path.push(path);
       rule.sequence.button = true;
 
       if (!rule.sequence.placeholder && rule.sequence.pass) {
@@ -622,22 +624,21 @@ class Warning {
         return;
       }
 
-      if (rule.button.mods.size !== obj.mods.size && rule.button.pass) {
+      if (rule.button.mods.size !== obj.mods.size) {
         this.errors.push({
           code: rule.button.code,
           error: rule.button.error,
           location: {
             start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
+              column: this.pointers[path].value.column,
+              line: this.pointers[path].value.line
             },
             end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
+              column: this.pointers[path].valueEnd.column,
+              line: this.pointers[path].valueEnd.line
             }
           }
         });
-        rule.button.pass = false;
       }
       return;
     }
@@ -645,7 +646,7 @@ class Warning {
     if (obj.block === "placeholder") {
       rule.sequence.placeholder = true;
 
-      if (rule.sequence.button && rule.sequence.pass) {
+      if (rule.sequence.button) {
         this.errors.push({
           code: rule.sequence.code,
           error: rule.sequence.error,
@@ -664,33 +665,28 @@ class Warning {
         rule.sequence.pass = false;
       }
 
-      if (
-        !rule.placeholder.mods.size.includes(obj.mods.size) &&
-        rule.placeholder.pass
-      ) {
+      if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
         this.errors.push({
           code: rule.placeholder.code,
           error: rule.placeholder.error,
           location: {
             start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
+              column: this.pointers[path].value.column,
+              line: this.pointers[path].value.line
             },
             end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
+              column: this.pointers[path].valueEnd.column,
+              line: this.pointers[path].valueEnd.line
             }
           }
         });
-
-        rule.placeholder.pass = false;
       }
     }
   }
 }
 
 class Header {
-  constructor(obj) {
+  constructor() {
     this.h1 = {
       code: "TEXT.SEVERAL_H1",
       error: "Заголовок h1 на странице должен быть единственным",
@@ -711,8 +707,6 @@ class Header {
       available: false,
       path: []
     };
-
-    this.path = obj.path;
   }
 
   static check(obj, rule, path) {
@@ -842,7 +836,7 @@ function lint(str) {
   this.pointers = obj.pointers;
   const req = reqcursion.bind(this);
   const path = "";
-  req(obj.data, path, { header: new Header({ path }) });
+  req(obj.data, path, { header: new Header() });
 
   return this.errors;
 }

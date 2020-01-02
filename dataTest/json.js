@@ -31,7 +31,7 @@ exports.json = `{
                       "block": "placeholder",
                       "mods": { "size": "m" }
                   },
-                  { "block": "button", "mods": { "size": "xl" } },
+                  { "block": "button", "mods": { "size": "l" } },
                   {
                     "block": "text",
                     "mods": { "size": "m" }
