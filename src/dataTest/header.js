@@ -35,6 +35,10 @@ exports.head = `{
           ]
       },
       {
+        "block": "text",
+        "mods": { "type": "h1" }
+      },
+      {
           "block": "text",
           "mods": { "type": "h2" }
       }
