@@ -521,19 +521,20 @@ class Warning {
       code: "WARNING.INVALID_BUTTON_SIZE",
       error: "Размер кнопки блока warning должен быть на 1 шаг больше текста",
       mods: { size: obj.size || "none" },
+      available: false,
       path: []
     };
 
     this.placeholder = {
       code: "WARNING.INVALID_PLACEHOLDER_SIZE",
       error: "Недопустимые размеры для блока placeholder",
-      mods: { size: ["s", "m", "l"] }
+      mods: { size: ["s", "m", "l"] },
+      available: false
     };
 
     this.sequence = {
       code: "WARNING.INVALID_BUTTON_POSITION",
-      error: "Блок button не может находиться перед блоком placeholder",
-      button: []
+      error: "Блок button не может находиться перед блоком placeholder"
     };
 
     this.path = obj.path;
@@ -593,7 +594,22 @@ class Warning {
     }
 
     if (obj.block === "button") {
-      rule.sequence.button.push(path);
+      if (!rule.placeholder.available) {
+        this.errors.push({
+          code: rule.sequence.code,
+          error: rule.sequence.error,
+          location: {
+            start: {
+              column: this.pointers[path].value.column,
+              line: this.pointers[path].value.line
+            },
+            end: {
+              column: this.pointers[path].valueEnd.column,
+              line: this.pointers[path].valueEnd.line
+            }
+          }
+        });
+      }
 
       if (rule.button.mods.size === "none") {
         rule.button.path.push({ size: obj.mods.size, path });
@@ -620,25 +636,8 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
-      if (rule.sequence.button.length > 0) {
-        rule.sequence.button.forEach(e => {
-          this.errors.push({
-            code: rule.sequence.code,
-            error: rule.sequence.error,
-            location: {
-              start: {
-                column: this.pointers[e].value.column,
-                line: this.pointers[e].value.line
-              },
-              end: {
-                column: this.pointers[e].valueEnd.column,
-                line: this.pointers[e].valueEnd.line
-              }
-            }
-          });
-        });
-        rule.sequence.button.length = 0;
-      }
+      rule.placeholder.available = true;
+
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
         this.errors.push({
           code: rule.placeholder.code,

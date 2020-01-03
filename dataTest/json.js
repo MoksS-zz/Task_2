@@ -2,10 +2,6 @@ exports.json = `{
   "block": "warning",
   "content": [
       {
-          "block": "placeholder",
-          "mods": { "size": "m" }
-      },
-      {
           "elem": "content",
           "content": [
               { "block": "button", "mods": { "size": "s" } },
@@ -16,28 +12,6 @@ exports.json = `{
               {
                   "block": "text",
                   "mods": { "size": "l" }
-              },
-              {
-                "block": "text",
-                "mods": { "type": "h1" }
-              },
-              {
-                "block": "text",
-                "mods": { "type": "h1" }
-              },
-              { "block": "warning",
-                "content": [
-                  { "block": "button", "mods": { "size": "l" } },
-                  {
-                      "block": "placeholder",
-                      "mods": { "size": "m" }
-                  },
-                  { "block": "button", "mods": { "size": "l" } },
-                  {
-                    "block": "text",
-                    "mods": { "size": "m" }
-                  }
-                ]
               }
           ]
       },
