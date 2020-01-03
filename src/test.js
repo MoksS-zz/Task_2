@@ -10,16 +10,16 @@ const { grid, gridValid } = require("./dataTest/grid");
 
 const time = performance.now();
 
-// console.log(lint(head));
+console.log(lint(head));
 // console.log(lint(json));
-console.log(lint(grid));
+// console.log(lint(grid));
 
 const timeEnd = performance.now();
-console.log(`${(timeEnd - time).toFixed(1)}ms`);
+console.log(`${(timeEnd - time).toFixed(1)}ms \n`);
 
 // console.log("VALID JSON ---->\n", lint(jsonValid));
-console.log("VALID JSON ---->\n", lint(gridValid));
-// console.log("VALID JSON ---->\n", lint(headValid));
+// console.log("VALID JSON ---->\n", lint(gridValid));
+console.log("VALID JSON ---->\n", lint(headValid));
 
 // console.log(chalk.yellow("Hello world!"));
 // console.log(JSON.stringify(jsonError, null, 4));

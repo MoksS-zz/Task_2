@@ -10,7 +10,7 @@ class Grid {
     this.path = obj.path;
   }
 
-  static check(obj, rule, path) {
+  static check(obj, rule) {
     if (market.has(obj.block)) {
       rule.market += rule.count;
 
@@ -31,7 +31,6 @@ class Grid {
         });
       }
     }
-    // console.log(rule);
   }
 }
 
