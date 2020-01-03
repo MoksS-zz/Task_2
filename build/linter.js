@@ -594,6 +594,11 @@ class Warning {
     }
 
     if (obj.block === "button") {
+      console.log("button  ", path);
+      if (rule.button.available && rule.placeholder.available) {
+        rule.button.available = false;
+        rule.placeholder.available = false;
+      }
       if (!rule.placeholder.available) {
         this.errors.push({
           code: rule.sequence.code,
@@ -609,6 +614,8 @@ class Warning {
             }
           }
         });
+      } else {
+        rule.button.available = true;
       }
 
       if (rule.button.mods.size === "none") {
@@ -636,6 +643,11 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
+      if (rule.button.available && rule.placeholder.available) {
+        rule.button.available = false;
+        rule.placeholder.available = false;
+      }
+      console.log("placeholder  ", path);
       rule.placeholder.available = true;
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
