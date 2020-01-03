@@ -508,6 +508,8 @@ const size = [
   "xxxxxl"
 ];
 
+const market = new Set(["commercial", "offer"]);
+
 class Warning {
   constructor(obj) {
     this.text = {
@@ -594,7 +596,6 @@ class Warning {
     }
 
     if (obj.block === "button") {
-      console.log("button  ", path);
       if (rule.button.available && rule.placeholder.available) {
         rule.button.available = false;
         rule.placeholder.available = false;
@@ -647,7 +648,6 @@ class Warning {
         rule.button.available = false;
         rule.placeholder.available = false;
       }
-      console.log("placeholder  ", path);
       rule.placeholder.available = true;
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
@@ -779,9 +779,43 @@ class Header {
   }
 }
 
+class Grid {
+  constructor(obj) {
+    this.code = "GRID.TOO_MUCH_MARKETING_BLOCKS";
+    this.error = "маркетинговые блоки занимают больше половины блока grid";
+    this.count = 0;
+    this.total = obj.total;
+    this.market = 0;
+    this.path = obj.path;
+  }
+
+  static check(obj, rule) {
+    if (market.has(obj.block)) {
+      rule.market += rule.count;
+
+      if (rule.total / 2 < rule.market) {
+        this.errors.push({
+          code: rule.code,
+          error: rule.error,
+          location: {
+            start: {
+              column: this.pointers[rule.path].value.column,
+              line: this.pointers[rule.path].value.line
+            },
+            end: {
+              column: this.pointers[rule.path].valueEnd.column,
+              line: this.pointers[rule.path].valueEnd.line
+            }
+          }
+        });
+      }
+    }
+    // console.log(rule);
+  }
+}
+
 function reqcursion(obj, path = "", rule = {}) {
   rule = { ...rule };
-
   if (Array.isArray(obj)) {
     obj.forEach((e, i) => {
       reqcursion(e, `${path}/${i}`, rule);
@@ -791,6 +825,14 @@ function reqcursion(obj, path = "", rule = {}) {
 
   if (obj.block === "warning") {
     rule.warning = new Warning({ path });
+  }
+
+  if (obj.block === "grid" && obj.hasOwnProperty("mods")) {
+    rule.grid = new Grid({ path, total: +obj.mods["m-columns"] });
+  }
+
+  if (obj.block === "grid" && obj.hasOwnProperty("elemMods")) {
+    rule.grid.count = +obj.elemMods["m-col"];
   }
 
   if (obj.hasOwnProperty("content")) {
@@ -805,6 +847,10 @@ function reqcursion(obj, path = "", rule = {}) {
 
   if (rule.hasOwnProperty("header")) {
     Header.check.call(this, obj, rule.header, path);
+  }
+
+  if (rule.hasOwnProperty("grid")) {
+    Grid.check.call(this, obj, rule.grid, path);
   }
 }
 

@@ -1,0 +1,63 @@
+// eslint-disable-next-line max-classes-per-file
+const jsonMap = require("./json-source-map.js");
+const Warning = require("./rule/Warning");
+const Header = require("./rule/Header");
+const Grid = require("./rule/Grid");
+
+function reqcursion(obj, path = "", rule = {}) {
+  rule = { ...rule };
+  if (Array.isArray(obj)) {
+    obj.forEach((e, i) => {
+      reqcursion(e, `${path}/${i}`, rule);
+    });
+    return;
+  }
+
+  if (obj.block === "warning") {
+    rule.warning = new Warning({ path });
+  }
+
+  if (obj.block === "grid" && obj.hasOwnProperty("mods")) {
+    rule.grid = new Grid({ path, total: +obj.mods["m-columns"] });
+  }
+
+  if (obj.block === "grid" && obj.hasOwnProperty("elemMods")) {
+    rule.grid.count = +obj.elemMods["m-col"];
+  }
+
+  if (obj.hasOwnProperty("content")) {
+    const newPath = `${path}/content`;
+    reqcursion(obj.content, newPath, rule);
+    return;
+  }
+
+  if (rule.hasOwnProperty("warning")) {
+    Warning.check.call(this, obj, rule.warning, path);
+  }
+
+  if (rule.hasOwnProperty("header")) {
+    Header.check.call(this, obj, rule.header, path);
+  }
+
+  if (rule.hasOwnProperty("grid")) {
+    Grid.check.call(this, obj, rule.grid, path);
+  }
+}
+
+/**
+ * @param {string} str
+ */
+
+function lint(str) {
+  const obj = jsonMap.parse(str);
+
+  this.errors = [];
+  this.pointers = obj.pointers;
+  const req = reqcursion.bind(this);
+  const path = "";
+  req(obj.data, path, { header: new Header() });
+
+  return this.errors;
+}
+
+module.exports = lint;

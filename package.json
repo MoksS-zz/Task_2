@@ -4,7 +4,7 @@
   "description": "Yandex SHRI Case 2",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon test.js"
+    "test": "nodemon src/test.js"
   },
   "devDependencies": {
     "eslint": "6.5.1",
