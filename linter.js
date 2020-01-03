@@ -52,22 +52,20 @@ class Warning {
         const sizeButton = size[size.indexOf(obj.mods.size) + 1];
         rule.text.mods.size = obj.mods.size;
 
-        if (
-          rule.button.mods.size !== "none" &&
-          rule.button.mods.size !== sizeButton
-        ) {
+        if (rule.button.mods.size === "none") {
           rule.button.path.forEach(e => {
+            if (e.size === sizeButton) return;
             this.errors.push({
               code: rule.button.code,
               error: rule.button.error,
               location: {
                 start: {
-                  column: this.pointers[e].value.column,
-                  line: this.pointers[e].value.line
+                  column: this.pointers[e.path].value.column,
+                  line: this.pointers[e.path].value.line
                 },
                 end: {
-                  column: this.pointers[e].valueEnd.column,
-                  line: this.pointers[e].valueEnd.line
+                  column: this.pointers[e.path].valueEnd.column,
+                  line: this.pointers[e.path].valueEnd.line
                 }
               }
             });
@@ -102,11 +100,10 @@ class Warning {
     }
 
     if (obj.block === "button") {
-      rule.button.path.push(path);
       rule.sequence.button.push(path);
 
       if (rule.button.mods.size === "none") {
-        rule.button.mods.size = obj.mods.size;
+        rule.button.path.push({ size: obj.mods.size, path });
         return;
       }
 
