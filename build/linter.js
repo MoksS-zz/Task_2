@@ -644,7 +644,8 @@ class Header {
   }
 
   static check(obj, rule, path) {
-    if (obj.block !== "text") return;
+    console.log(obj.block, path);
+    if (obj.block !== "text" || !obj.mods) return;
     switch (obj.mods.type) {
       case "h1":
         if (rule.h1.available) {
@@ -720,7 +721,7 @@ function reqcursion(obj, path = "", rule = {}) {
     rule.grid.count = +obj.elemMods["m-col"];
   }
 
-  if (obj.hasOwnProperty("content")) {
+  if (obj.hasOwnProperty("content") && Array.isArray(obj.content)) {
     const newPath = `${path}/content`;
     reqcursion(obj.content, newPath, rule);
     return;

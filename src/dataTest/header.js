@@ -1,46 +1,51 @@
 exports.head = `{
-  "block": "lexa",
+  "block": "page",
   "content": [
       {
-      "block": "text",
-      "mods": { "type": "h3" }
-      },
-      {
-      "block": "text",
-      "mods": { "type": "h2" }
-      },
-      {
-        "block": "text",
-        "mods": { "type": "h2" }
-      },
-      {
-        "block": "text",
-        "mods": { "type": "h1" }
-      },
-      {
-          "elem": "content",
+          "block": "page",
+          "elem": "section",
           "content": [
               {
-                  "block": "text",
-                  "mods": { "type": "h1" }
-              },
-              {
-                "block": "text",
-                "mods": { "type": "h3" }
-              },
-              {
-                "block": "text",
-                "mods": { "size": "s" }
+                  "block": "page",
+                  "elem": "content",
+                  "content": [
+                      {
+                          "block": "text",
+                          "mods": {
+                              "type": "h1"
+                          },
+                          "content": "header"
+                      },
+                      {
+                          "block": "text",
+                          "content": "text"
+                      }
+                  ]
               }
           ]
       },
       {
-        "block": "text",
-        "mods": { "type": "h1" }
-      },
-      {
-          "block": "text",
-          "mods": { "type": "h2" }
+          "block": "page",
+          "elem": "section",
+          "content": [
+              {
+                  "block": "page",
+                  "elem": "content",
+                  "content": [
+                      {
+                          "block": "text",
+                          "mods": {
+                              "type": "h2"
+                          },
+                          "content": "header"
+                      },
+                      {
+                          "block": "text",
+                          "content": "text"
+                      }
+                  ]
+              }
+          ]
       }
   ]
 }`;

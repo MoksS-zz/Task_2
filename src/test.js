@@ -10,7 +10,7 @@ const { grid, gridValid } = require("./dataTest/grid");
 
 const time = performance.now();
 
-// console.log(lint(head));
+console.log(lint(head));
 // console.log(lint(json));
 // console.log(lint(grid));
 
