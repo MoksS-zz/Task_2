@@ -644,7 +644,6 @@ class Header {
   }
 
   static check(obj, rule, path) {
-    console.log(obj.block, path);
     if (obj.block !== "text" || !obj.mods) return;
     switch (obj.mods.type) {
       case "h1":
@@ -726,6 +725,12 @@ function reqcursion(obj, path = "", rule = {}) {
   }
 
   if (obj.content && Array.isArray(obj.content)) {
+    const newPath = `${path}/content`;
+    reqcursion(obj.content, newPath, rule);
+    return;
+  }
+
+  if (typeof obj.content === "object" && obj.content !== null) {
     const newPath = `${path}/content`;
     reqcursion(obj.content, newPath, rule);
     return;
