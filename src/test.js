@@ -1,43 +1,31 @@
+/* eslint-disable no-unused-expressions */
 const chalk = require("chalk");
 const { performance } = require("perf_hooks");
 const lint = require("./linter");
 
 require("util").inspect.defaultOptions.depth = null;
 
-const { json, jsonError , jsonValid } = require("./dataTest/json");
-const { head, headValid } = require("./dataTest/header");
-const { grid, gridValid } = require("./dataTest/grid");
+const { warning, warningError } = require("./dataTest/warning");
+const { head, headError } = require("./dataTest/header");
+const { grid, gridError } = require("./dataTest/grid");
 
 const time = performance.now();
 
-console.log(lint(head));
-// console.log(lint(json));
-// console.log(lint(grid));
+const headResult = lint(head);
+const warningResult = lint(warning);
+const gridResult = lint(grid);
+
+JSON.stringify(headResult, null, 2) === JSON.stringify(headError, null, 2)
+  ? console.log("Header rule", chalk.green("SUCCESS"))
+  : console.log("Header rule", chalk.red("FAIL"));
+
+JSON.stringify(warningResult, null, 2) === JSON.stringify(warningError, null, 2)
+  ? console.log("Warning rule", chalk.green("SUCCESS"))
+  : console.log("Warning rule", chalk.red("FAIL"));
+
+JSON.stringify(gridResult, null, 2) === JSON.stringify(gridError, null, 2)
+  ? console.log("Grid rule", chalk.green("SUCCESS"))
+  : console.log("Grid rule", chalk.red("FAIL"));
 
 const timeEnd = performance.now();
 console.log(`${(timeEnd - time).toFixed(1)}ms \n`);
-
-// console.log("VALID JSON ---->\n", lint(jsonValid));
-// console.log("VALID JSON ---->\n", lint(gridValid));
-console.log("VALID JSON ---->\n", lint(headValid));
-
-// console.log(chalk.yellow("Hello world!"));
-// console.log(JSON.stringify(jsonError, null, 4));
-
-// console.log(
-//   JSON.stringify(jsonError, null, 4) ===
-//     JSON.stringify(
-//       [
-//         {
-//           code: "WARNING.TEXT_SIZES_SHOULD_BE_EQUAL",
-//           error: "Тексты в блоке warning должны быть одного размера",
-//           location: {
-//             start: { column: 1, line: 1 },
-//             end: { column: 2, line: 22 }
-//           }
-//         }
-//       ],
-//       null,
-//       4
-//     )
-// );
