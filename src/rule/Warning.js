@@ -27,15 +27,13 @@ class Warning {
       code: "WARNING.INVALID_BUTTON_SIZE",
       error: "Размер кнопки блока warning должен быть на 1 шаг больше текста",
       mods: { size: obj.size || "none" },
-      available: false,
       path: []
     };
 
     this.placeholder = {
       code: "WARNING.INVALID_PLACEHOLDER_SIZE",
       error: "Недопустимые размеры для блока placeholder",
-      mods: { size: ["s", "m", "l"] },
-      available: false
+      mods: { size: ["s", "m", "l"] }
     };
 
     this.sequence = {
@@ -74,21 +72,14 @@ class Warning {
     }
 
     if (obj.block === "button") {
-      if (rule.button.available && rule.placeholder.available) {
-        rule.button.available = false;
-        rule.placeholder.available = false;
-      }
-      if (!rule.placeholder.available) {
-        error(this, rule.sequence, path);
-      } else {
-        rule.button.available = true;
-      }
+      rule.button.path.push(path);
+
+      if (!obj.mods) return;
 
       if (rule.button.mods.size === "none") {
         rule.button.path.push({ size: obj.mods.size, path });
         return;
       }
-
       if (rule.button.mods.size !== obj.mods.size) {
         error(this, rule.button, path);
       }
@@ -96,11 +87,14 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
-      if (rule.button.available && rule.placeholder.available) {
-        rule.button.available = false;
-        rule.placeholder.available = false;
+      if (rule.button.path.length > 0) {
+        rule.button.path.forEach(e => {
+          error(this, rule.sequence, e);
+        });
+        rule.button.path.length = 0;
       }
-      rule.placeholder.available = true;
+
+      if (!obj.mods) return;
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
         error(this, rule.placeholder, path);

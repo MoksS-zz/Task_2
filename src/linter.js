@@ -13,19 +13,23 @@ function reqcursion(obj, path = "", rule = {}) {
     return;
   }
 
-  if (obj.block === "warning") {
+  if (obj.block === "warning" && !obj.elem) {
     rule.warning = new Warning({ path });
-  }
-
-  if (obj.block === "grid" && obj.hasOwnProperty("mods")) {
+  } else if (obj.block === "page" && !obj.elem) {
+    rule.header = new Header();
+  } else if (obj.block === "grid" && obj.mods) {
     rule.grid = new Grid({ path, total: +obj.mods["m-columns"] });
-  }
-
-  if (obj.block === "grid" && obj.hasOwnProperty("elemMods")) {
+  } else if (obj.block === "grid" && obj.elemMods) {
     rule.grid.count = +obj.elemMods["m-col"];
   }
 
-  if (obj.hasOwnProperty("content")) {
+  if (obj.content && Array.isArray(obj.content)) {
+    const newPath = `${path}/content`;
+    reqcursion(obj.content, newPath, rule);
+    return;
+  }
+
+  if (typeof obj.content === "object" && obj.content !== null) {
     const newPath = `${path}/content`;
     reqcursion(obj.content, newPath, rule);
     return;
@@ -33,13 +37,9 @@ function reqcursion(obj, path = "", rule = {}) {
 
   if (rule.hasOwnProperty("warning")) {
     Warning.check.call(this, obj, rule.warning, path);
-  }
-
-  if (rule.hasOwnProperty("header")) {
+  } else if (rule.hasOwnProperty("header")) {
     Header.check.call(this, obj, rule.header, path);
-  }
-
-  if (rule.hasOwnProperty("grid")) {
+  } else if (rule.hasOwnProperty("grid")) {
     Grid.check.call(this, obj, rule.grid, path);
   }
 }
@@ -55,9 +55,8 @@ function lint(str) {
   this.pointers = obj.pointers;
   const req = reqcursion.bind(this);
   const path = "";
-  req(obj.data, path, { header: new Header() });
+  req(obj.data, path);
 
   return this.errors;
 }
-
 module.exports = lint;
