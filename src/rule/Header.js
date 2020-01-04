@@ -1,3 +1,5 @@
+const error = require("../handlers/error");
+
 class Header {
   constructor() {
     this.h1 = {
@@ -24,39 +26,13 @@ class Header {
     switch (obj.mods.type) {
       case "h1":
         if (rule.h1.available) {
-          this.errors.push({
-            code: rule.h1.code,
-            error: rule.h1.error,
-            location: {
-              start: {
-                column: this.pointers[path].value.column,
-                line: this.pointers[path].value.line
-              },
-              end: {
-                column: this.pointers[path].valueEnd.column,
-                line: this.pointers[path].valueEnd.line
-              }
-            }
-          });
+          error(this, rule.h1, path);
         }
         rule.h1.available = true;
 
         if (rule.h2.path.length > 0) {
           rule.h2.path.forEach(e => {
-            this.errors.push({
-              code: rule.h2.code,
-              error: rule.h2.error,
-              location: {
-                start: {
-                  column: this.pointers[e].value.column,
-                  line: this.pointers[e].value.line
-                },
-                end: {
-                  column: this.pointers[e].valueEnd.column,
-                  line: this.pointers[e].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.h2, e);
           });
           rule.h2.path.length = 0;
         }
@@ -67,20 +43,7 @@ class Header {
 
         if (rule.h3.path.length > 0) {
           rule.h3.path.forEach(e => {
-            this.errors.push({
-              code: rule.h3.code,
-              error: rule.h3.error,
-              location: {
-                start: {
-                  column: this.pointers[e].value.column,
-                  line: this.pointers[e].value.line
-                },
-                end: {
-                  column: this.pointers[e].valueEnd.column,
-                  line: this.pointers[e].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.h3, e);
           });
           rule.h3.path.length = 0;
         }

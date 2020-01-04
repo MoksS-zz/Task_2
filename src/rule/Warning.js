@@ -1,3 +1,5 @@
+const error = require("../handlers/error");
+
 const size = [
   "xxxs",
   "xxs",
@@ -53,20 +55,7 @@ class Warning {
         if (rule.button.mods.size === "none") {
           rule.button.path.forEach(e => {
             if (e.size === sizeButton) return;
-            this.errors.push({
-              code: rule.button.code,
-              error: rule.button.error,
-              location: {
-                start: {
-                  column: this.pointers[e.path].value.column,
-                  line: this.pointers[e.path].value.line
-                },
-                end: {
-                  column: this.pointers[e.path].valueEnd.column,
-                  line: this.pointers[e.path].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.button, e.path);
           });
 
           rule.button.path.length = 0;
@@ -77,20 +66,7 @@ class Warning {
       }
 
       if (rule.text.mods.size !== obj.mods.size && rule.text.pass) {
-        this.errors.push({
-          code: rule.text.code,
-          error: rule.text.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.text, rule.path);
 
         rule.text.pass = false;
       }
@@ -103,20 +79,7 @@ class Warning {
         rule.placeholder.available = false;
       }
       if (!rule.placeholder.available) {
-        this.errors.push({
-          code: rule.sequence.code,
-          error: rule.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.sequence, path);
       } else {
         rule.button.available = true;
       }
@@ -127,20 +90,7 @@ class Warning {
       }
 
       if (rule.button.mods.size !== obj.mods.size) {
-        this.errors.push({
-          code: rule.button.code,
-          error: rule.button.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.button, path);
       }
       return;
     }
@@ -153,20 +103,7 @@ class Warning {
       rule.placeholder.available = true;
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
-        this.errors.push({
-          code: rule.placeholder.code,
-          error: rule.placeholder.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.placeholder, path);
       }
     }
   }

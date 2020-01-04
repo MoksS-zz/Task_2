@@ -510,6 +510,23 @@ const size = [
 
 const market = new Set(["commercial", "offer"]);
 
+const error = (self, obj, path) => {
+  self.errors.push({
+    code: obj.code,
+    error: obj.error,
+    location: {
+      start: {
+        column: self.pointers[path].value.column,
+        line: self.pointers[path].value.line
+      },
+      end: {
+        column: self.pointers[path].valueEnd.column,
+        line: self.pointers[path].valueEnd.line
+      }
+    }
+  });
+};
+
 class Warning {
   constructor(obj) {
     this.text = {
@@ -551,20 +568,7 @@ class Warning {
         if (rule.button.mods.size === "none") {
           rule.button.path.forEach(e => {
             if (e.size === sizeButton) return;
-            this.errors.push({
-              code: rule.button.code,
-              error: rule.button.error,
-              location: {
-                start: {
-                  column: this.pointers[e.path].value.column,
-                  line: this.pointers[e.path].value.line
-                },
-                end: {
-                  column: this.pointers[e.path].valueEnd.column,
-                  line: this.pointers[e.path].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.button, e.path);
           });
 
           rule.button.path.length = 0;
@@ -575,20 +579,7 @@ class Warning {
       }
 
       if (rule.text.mods.size !== obj.mods.size && rule.text.pass) {
-        this.errors.push({
-          code: rule.text.code,
-          error: rule.text.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.text, rule.path);
 
         rule.text.pass = false;
       }
@@ -601,20 +592,7 @@ class Warning {
         rule.placeholder.available = false;
       }
       if (!rule.placeholder.available) {
-        this.errors.push({
-          code: rule.sequence.code,
-          error: rule.sequence.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.sequence, path);
       } else {
         rule.button.available = true;
       }
@@ -625,20 +603,7 @@ class Warning {
       }
 
       if (rule.button.mods.size !== obj.mods.size) {
-        this.errors.push({
-          code: rule.button.code,
-          error: rule.button.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.button, path);
       }
       return;
     }
@@ -651,20 +616,7 @@ class Warning {
       rule.placeholder.available = true;
 
       if (!rule.placeholder.mods.size.includes(obj.mods.size)) {
-        this.errors.push({
-          code: rule.placeholder.code,
-          error: rule.placeholder.error,
-          location: {
-            start: {
-              column: this.pointers[path].value.column,
-              line: this.pointers[path].value.line
-            },
-            end: {
-              column: this.pointers[path].valueEnd.column,
-              line: this.pointers[path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule.placeholder, path);
       }
     }
   }
@@ -696,39 +648,13 @@ class Header {
     switch (obj.mods.type) {
       case "h1":
         if (rule.h1.available) {
-          this.errors.push({
-            code: rule.h1.code,
-            error: rule.h1.error,
-            location: {
-              start: {
-                column: this.pointers[path].value.column,
-                line: this.pointers[path].value.line
-              },
-              end: {
-                column: this.pointers[path].valueEnd.column,
-                line: this.pointers[path].valueEnd.line
-              }
-            }
-          });
+          error(this, rule.h1, path);
         }
         rule.h1.available = true;
 
         if (rule.h2.path.length > 0) {
           rule.h2.path.forEach(e => {
-            this.errors.push({
-              code: rule.h2.code,
-              error: rule.h2.error,
-              location: {
-                start: {
-                  column: this.pointers[e].value.column,
-                  line: this.pointers[e].value.line
-                },
-                end: {
-                  column: this.pointers[e].valueEnd.column,
-                  line: this.pointers[e].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.h2, e);
           });
           rule.h2.path.length = 0;
         }
@@ -739,20 +665,7 @@ class Header {
 
         if (rule.h3.path.length > 0) {
           rule.h3.path.forEach(e => {
-            this.errors.push({
-              code: rule.h3.code,
-              error: rule.h3.error,
-              location: {
-                start: {
-                  column: this.pointers[e].value.column,
-                  line: this.pointers[e].value.line
-                },
-                end: {
-                  column: this.pointers[e].valueEnd.column,
-                  line: this.pointers[e].valueEnd.line
-                }
-              }
-            });
+            error(this, rule.h3, e);
           });
           rule.h3.path.length = 0;
         }
@@ -780,23 +693,9 @@ class Grid {
       rule.market += rule.count;
 
       if (rule.total / 2 < rule.market) {
-        this.errors.push({
-          code: rule.code,
-          error: rule.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule, rule.path);
       }
     }
-    // console.log(rule);
   }
 }
 

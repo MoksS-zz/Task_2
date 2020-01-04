@@ -1,3 +1,5 @@
+const error = require("../handlers/error");
+
 const market = new Set(["commercial", "offer"]);
 
 class Grid {
@@ -15,20 +17,7 @@ class Grid {
       rule.market += rule.count;
 
       if (rule.total / 2 < rule.market) {
-        this.errors.push({
-          code: rule.code,
-          error: rule.error,
-          location: {
-            start: {
-              column: this.pointers[rule.path].value.column,
-              line: this.pointers[rule.path].value.line
-            },
-            end: {
-              column: this.pointers[rule.path].valueEnd.column,
-              line: this.pointers[rule.path].valueEnd.line
-            }
-          }
-        });
+        error(this, rule, rule.path);
       }
     }
   }
