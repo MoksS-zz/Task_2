@@ -54,8 +54,7 @@ function lint(str) {
   this.errors = [];
   this.pointers = obj.pointers;
   const req = reqcursion.bind(this);
-  const path = "";
-  req(obj.data, path);
+  req(obj.data);
 
   return this.errors;
 }
