@@ -233,7 +233,8 @@ const parse = (source, _, options) => {
   function getLoc() {
     return {
       line: line + 1,
-      column: column + 1
+      column: column + 1,
+      pos
     };
   }
 
@@ -439,7 +440,8 @@ const stringify = (data, _, options) => {
     pointers[ptr] = pointers[ptr] || {};
     pointers[ptr][prop] = {
       line: line + 1,
-      column: column + 1
+      column: column + 1,
+      pos
     };
   }
 
