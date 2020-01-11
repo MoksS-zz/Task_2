@@ -27,7 +27,8 @@ class Warning {
       code: "WARNING.INVALID_BUTTON_SIZE",
       error: "Размер кнопки блока warning должен быть на 1 шаг больше текста",
       mods: { size: obj.size || "none" },
-      path: []
+      pathText: [],
+      pathPlacholder: []
     };
 
     this.placeholder = {
@@ -52,12 +53,12 @@ class Warning {
         rule.text.mods.size = obj.mods.size;
 
         if (rule.button.mods.size === "none") {
-          rule.button.path.forEach(e => {
+          rule.button.pathText.forEach(e => {
             if (e.size === sizeButton) return;
             error(this, rule.button, e.path);
           });
 
-          rule.button.path.length = 0;
+          rule.button.pathText.length = 0;
         }
 
         rule.button.mods.size = sizeButton;
@@ -73,12 +74,12 @@ class Warning {
     }
 
     if (obj.block === "button") {
-      rule.button.path.push(path);
+      rule.button.pathPlacholder.push(path);
 
       if (!obj.mods) return;
 
       if (rule.button.mods.size === "none") {
-        rule.button.path.push({ size: obj.mods.size, path });
+        rule.button.pathText.push({ size: obj.mods.size, path });
         return;
       }
       if (rule.button.mods.size !== obj.mods.size) {
@@ -88,11 +89,11 @@ class Warning {
     }
 
     if (obj.block === "placeholder") {
-      if (rule.button.path.length > 0) {
-        rule.button.path.forEach(e => {
+      if (rule.button.pathPlacholder.length > 0) {
+        rule.button.pathPlacholder.forEach(e => {
           error(this, rule.sequence, e);
         });
-        rule.button.path.length = 0;
+        rule.button.pathPlacholder.length = 0;
       }
 
       if (!obj.mods) return;
