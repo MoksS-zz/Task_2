@@ -37,9 +37,11 @@ function reqcursion(obj, path = "", rule = {}) {
 
   if (rule.hasOwnProperty("warning")) {
     Warning.check.call(this, obj, rule.warning, path);
-  } else if (rule.hasOwnProperty("header")) {
+  }
+  if (rule.hasOwnProperty("header")) {
     Header.check.call(this, obj, rule.header, path);
-  } else if (rule.hasOwnProperty("grid")) {
+  }
+  if (rule.hasOwnProperty("grid")) {
     Grid.check.call(this, obj, rule.grid, path);
   }
 }
