@@ -699,7 +699,7 @@ class Grid {
 
 function reqcursion(obj, path = "", rule = {}) {
   rule = { ...rule };
-  console.log(rule);
+
   if (Array.isArray(obj)) {
     obj.forEach((e, i) => {
       reqcursion(e, `${path}/${i}`, rule);
