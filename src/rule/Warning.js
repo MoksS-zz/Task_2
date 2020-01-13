@@ -47,8 +47,8 @@ class Warning {
 
   static check(obj, rule, path) {
     if (obj.block === "text") {
+      if (!obj.mods || !obj.mods.size) return;
       if (rule.text.mods.size === "none") {
-        if (!obj.mods) return;
         const sizeButton = size[size.indexOf(obj.mods.size) + 1];
         rule.text.mods.size = obj.mods.size;
 

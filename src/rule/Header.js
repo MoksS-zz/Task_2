@@ -22,7 +22,7 @@ class Header {
   }
 
   static check(obj, rule, path) {
-    if (obj.block !== "text" || !obj.mods) return;
+    if (obj.block !== "text" || !obj.mods || !obj.mods.type) return;
     switch (obj.mods.type) {
       case "h1":
         if (rule.h1.available) {
